@@ -17,9 +17,5 @@
 .idea/runConfigurations.xml
 .idea/sonarlint/
 .idea/vcs.xml
-build.gradle
-gradle.properties
-gradle/
-gradlew
 gradlew.bat
 settings.gradle
