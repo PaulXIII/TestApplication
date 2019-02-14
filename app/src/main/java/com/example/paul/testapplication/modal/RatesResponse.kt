@@ -1,7 +1,7 @@
-package com.example.paul.testapplication.model
+package com.example.paul.testapplication.modal
 
-import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class RatesResponse(
@@ -11,5 +11,4 @@ data class RatesResponse(
     val date: String,
     @Json(name = "rates")
     val rates: Map<String, Double>
-) {
-}
+)

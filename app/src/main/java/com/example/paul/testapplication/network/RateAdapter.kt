@@ -1,6 +1,6 @@
 package com.example.paul.testapplication.network
 
-import com.example.paul.testapplication.model.RatesResponse
+import com.example.paul.testapplication.modal.RatesResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET

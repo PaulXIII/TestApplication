@@ -1,6 +1,6 @@
 package com.example.paul.testapplication.network
 
-import com.example.paul.testapplication.model.RatesResponse
+import com.example.paul.testapplication.modal.RatesResponse
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Deferred
 import okhttp3.OkHttpClient
