@@ -6,13 +6,25 @@ import android.net.Network
 import android.net.NetworkRequest
 import android.os.Build
 import android.support.annotation.RequiresApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.produce
 
 
-class NetworkService(private val context: Context) {
+class ConnectionService(context: Context) {
+
+    private val stateChannel: BroadcastChannel<NetworkState> by lazy {
+        return@lazy ConflatedBroadcastChannel<NetworkState>()
+    }
+
+    private fun sendValue(state: NetworkState) {
+        CoroutineScope(Dispatchers.Main).produce<NetworkState> {
+            stateChannel.send(state)
+        }
+    }
 
     private var networkState = NetworkState.OFFLINE
     private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
@@ -21,16 +33,15 @@ class NetworkService(private val context: Context) {
     object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network?) {
-            networkState = NetworkState.ONLINE
+            sendValue(NetworkState.ONLINE)
         }
 
         override fun onLost(network: Network?) {
-            networkState = NetworkState.OFFLINE
+            sendValue(NetworkState.OFFLINE)
         }
 
         override fun onUnavailable() {
-            super.onUnavailable()
-            networkState = NetworkState.OFFLINE
+            sendValue(NetworkState.OFFLINE)
         }
     }
 
@@ -41,16 +52,18 @@ class NetworkService(private val context: Context) {
                 when {
                     Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT -> {
                         networkState = if (isConnectedOrConnecting) NetworkState.ONLINE else NetworkState.OFFLINE
+                        sendValue(networkState)
                     }
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-                        val networkRequest = NetworkRequest.Builder().build()
-                        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-                    }
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
-                        connectivityManager.registerDefaultNetworkCallback(networkCallback)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            connectivityManager.registerDefaultNetworkCallback(networkCallback)
+                        } else {
+                            val networkRequest = NetworkRequest.Builder().build()
+                            connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+                        }
                     }
                     else -> {
-                        networkState = NetworkState.OFFLINE
+                        sendValue(NetworkState.OFFLINE)
                     }
                 }
             }
@@ -58,10 +71,8 @@ class NetworkService(private val context: Context) {
     }
 
     @ExperimentalCoroutinesApi
-    fun getNetworkState(): ReceiveChannel<NetworkState> {
-        return GlobalScope.produce {
-            send(networkState)
-        }
+    fun getNetworkState(): BroadcastChannel<NetworkState> {
+        return stateChannel
     }
 
     fun unregisterCallback() {
