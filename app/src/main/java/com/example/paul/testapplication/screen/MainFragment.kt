@@ -3,6 +3,7 @@ package com.example.paul.testapplication.screen
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,27 +18,47 @@ class MainFragment : Fragment(), MainView {
     private lateinit var presenter: MainPresenter
     var adapter: RatesAdapter? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        presenter = MainPresenter(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        presenter = MainPresenter(this)
         val recyclerView = recycler
-        adapter = RatesAdapter(ArrayList())
+        adapter = RatesAdapter { item ->
+
+        }
         recyclerView.adapter = adapter
-        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        recyclerView.layoutManager = layoutManager
+        if (recyclerView.layoutManager == null) {
+            val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            recyclerView.layoutManager = layoutManager
+        }
+        if (savedInstanceState == null)
+            presenter.loadRates()
+    }
 
+    override fun onResume() {
+        super.onResume()
         presenter.loadRates()
+    }
 
+    override fun onStop() {
+        super.onStop()
+        presenter.cancelLoading()
     }
 
     override fun showRates(list: ArrayList<RateItem>) {
-        adapter?.updateRates(list)
+        adapter?.submitList(list)
+    }
+
+    override fun showError(message: String) {
+        Log.e("TAG", "Error message: $message")
     }
 }

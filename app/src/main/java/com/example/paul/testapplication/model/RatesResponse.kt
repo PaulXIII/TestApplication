@@ -1,4 +1,4 @@
-package com.example.paul.testapplication.modal
+package com.example.paul.testapplication.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

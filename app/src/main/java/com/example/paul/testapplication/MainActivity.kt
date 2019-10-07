@@ -23,11 +23,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         connection.updateState()
-        val fragment = MainFragment()
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()
+
+        if (savedInstanceState == null) {
+            val fragment = MainFragment()
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit()
+        }
     }
 
     override fun onStart() {

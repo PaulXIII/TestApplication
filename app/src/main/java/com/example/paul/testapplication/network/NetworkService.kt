@@ -1,6 +1,6 @@
 package com.example.paul.testapplication.network
 
-import com.example.paul.testapplication.modal.RatesResponse
+import com.example.paul.testapplication.model.RatesResponse
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Deferred
 import okhttp3.OkHttpClient
@@ -31,9 +31,9 @@ object NetworkService {
             .build()
     }
 
-    fun getRates(baseCurrency: String): Deferred<Response<RatesResponse>> {
+    fun getRatesAsync(baseCurrency: String): Deferred<Response<RatesResponse>> {
         return createRetrofit()
-            .create(RateAdapter::class.java).getRates(baseCurrency)
+            .create(RateAdapter::class.java).getRatesAsync(baseCurrency)
     }
 
 }
