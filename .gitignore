@@ -17,9 +17,6 @@
 # Generated files
 bin/
 gen/
-out/
-release/
-
 # Gradle files
 .gradle/
 build/
@@ -129,8 +126,6 @@ hs_err_pid*
 # Generated files
 
 # Gradle files
-.gradle
-
 # Signing files
 .signing/
 
@@ -162,8 +157,6 @@ obj/
 /out/
 
 # User-specific configurations
-.idea/caches/
-.idea/libraries/
 .idea/shelf/
 .idea/.name
 .idea/compiler.xml
@@ -171,7 +164,6 @@ obj/
 .idea/encodings.xml
 .idea/misc.xml
 .idea/scopes/scope_settings.xml
-.idea/vcs.xml
 .idea/jsLibraryMappings.xml
 .idea/datasources.xml
 .idea/dataSources.ids
